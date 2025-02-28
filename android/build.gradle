@@ -17,5 +17,8 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
     }
 }
-
+project.ext.vectoricons = [
+	iconFontNames: ['MaterialCommunityIcons.ttf'] // Add fonts needed
+]
 apply plugin: "com.facebook.react.rootproject"
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
