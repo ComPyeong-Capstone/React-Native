@@ -1,19 +1,22 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons"; // Expo 아이콘 대신 변경
+import { useNavigation } from "@react-navigation/native"; // ✅ 네비게이션 추가
+import Icon from "react-native-vector-icons/Ionicons";
 
 const { width } = Dimensions.get("window");
 
-const KidsFriendlyUI = () => {
+const ResultScreenUI = () => {
+  const navigation = useNavigation(); // ✅ 네비게이션 객체 가져오기
+
+  const handleExit = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Main" }], // ✅ "Main" (BottomTabNavigator)으로 이동
+    });
+  };
+
   return (
     <View style={styles.container}>
-      {/* 진행 바 */}
-      <View style={styles.progressBar}>
-        <View style={styles.progressDot} />
-        <View style={[styles.progressDot, styles.activeDot]} />
-        <View style={styles.progressDot} />
-        <View style={styles.progressDot} />
-      </View>
 
       {/* 중앙 네모 박스 (결과물) */}
       <View style={styles.resultBox}>
@@ -31,7 +34,7 @@ const KidsFriendlyUI = () => {
           <TouchableOpacity style={styles.saveButton}>
             <Text style={styles.smallButtonText}>저장</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.exitButton}>
+          <TouchableOpacity style={styles.exitButton} onPress={handleExit}>
             <Text style={styles.smallButtonText}>나가기</Text>
           </TouchableOpacity>
         </View>
@@ -45,19 +48,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "#1F2C3D",
-    paddingTop: 2,
-  },
-  progressBar: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 40,
-  },
-  progressDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#CCC",
-    marginHorizontal: 5,
+    paddingTop: 70,
   },
   resultBox: {
     width: width * 0.8,
@@ -126,4 +117,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default KidsFriendlyUI;
+export default ResultScreenUI;

@@ -37,7 +37,7 @@ const AddScreen = () => {
         {/* ✅ 내 사진 영상 버튼 (PhotoNavigator > VideoLengthScreen 이동) */}
         <TouchableOpacity
           style={[styles.button, {height: scaleSize(60, width)}]}
-          onPress={() => navigation.navigate('Photo', {screen: 'VideoLength'})} // ✅ VideoLengthScreen으로 이동
+          onPress={() => navigation.navigate('PhotoStack')} // ✅ ShortsNavigator로 이동
         >
           <Text style={[styles.buttonText, {fontSize: scaleFont(18, width)}]}>
             내 사진 영상

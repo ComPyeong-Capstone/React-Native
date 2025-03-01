@@ -1,64 +1,104 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  useWindowDimensions,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Slider from '@react-native-community/slider';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useWindowDimensions} from 'react-native';
 
-const StepProgressBar = ({currentStep}) => {
-  return (
-    <View style={styles.progressBarContainer}>
-      {[1, 2, 3].map(step => (
-        <View
-          key={step}
-          style={[
-            styles.stepCircle,
-            step === currentStep ? styles.activeStep : styles.inactiveStep,
-          ]}
-        />
-      ))}
-    </View>
-  );
-};
+// 📌 반응형 크기 조정 함수
+const scaleSize = (size, width) => (size * width) / 375;
+const scaleFont = (size, width) => (size * width) / 375;
 
-const VideoLengthScreen = () => {
-  const {width} = useWindowDimensions();
+const ShortsVideoScreen = ({navigation}) => {
+  const {width, height} = useWindowDimensions(); // ✅ 반응형 적용
+  const insets = useSafeAreaInsets(); // ✅ 노치 영역 고려
   const [videoLength, setVideoLength] = useState(30);
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* 단계 바 */}
-      <StepProgressBar currentStep={1} />
+      {/* ✅ 최상단 4단계 진행바 (노치 대응) */}
+      <View
+        style={[
+          styles.progressContainer,
+          {top: insets.top + scaleSize(10, height)},
+        ]}>
+        <Text
+          style={[styles.progressDotActive, {fontSize: scaleFont(18, width)}]}>
+          ●
+        </Text>
+        <View style={styles.progressLine} />
+        <Text
+          style={[
+            styles.progressDotInactive,
+            {fontSize: scaleFont(18, width)},
+          ]}>
+          ○
+        </Text>
+        <View style={styles.progressLine} />
+        <Text
+          style={[
+            styles.progressDotInactive,
+            {fontSize: scaleFont(18, width)},
+          ]}>
+          ○
+        </Text>
+        <View style={styles.progressLine} />
+        <Text
+          style={[
+            styles.progressDotInactive,
+            {fontSize: scaleFont(18, width)},
+          ]}>
+          ○
+        </Text>
+      </View>
 
-      {/* 영상 길이 선택 */}
-      <Text style={[styles.label, {fontSize: width * 0.05}]}>영상 길이</Text>
+      {/* 📌 영상 길이 선택 */}
+      <Text
+        style={[
+          styles.label,
+          {fontSize: scaleFont(18, width), marginTop: scaleSize(80, height)},
+        ]}>
+        영상 길이
+      </Text>
       <Slider
-        style={{width: width * 0.8, height: 40}}
+        style={[styles.slider, {width: scaleSize(300, width)}]}
         minimumValue={30}
         maximumValue={60}
         step={5}
         value={videoLength}
-        onValueChange={setVideoLength}
+        onValueChange={value => setVideoLength(value)}
         minimumTrackTintColor="#51BCB4"
-        maximumTrackTintColor="#5A6A7A"
+        maximumTrackTintColor="#888"
         thumbTintColor="#51BCB4"
       />
-
-      <View style={styles.sliderLabels}>
-        <Text style={styles.sliderText}>30초</Text>
-        <Text style={styles.sliderText}>60초</Text>
+      <View style={[styles.timeLabels, {width: scaleSize(300, width)}]}>
+        <Text style={[styles.timeText, {fontSize: scaleFont(16, width)}]}>
+          30초
+        </Text>
+        <Text style={[styles.timeText, {fontSize: scaleFont(16, width)}]}>
+          60초
+        </Text>
       </View>
 
-      {/* 이전 / 다음 버튼 */}
+      {/* 📌 버튼 추가 */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={[styles.button, styles.prevButton]}>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            styles.prevButton,
+            {width: scaleSize(140, width)},
+          ]}
+          onPress={() => navigation.goBack()} // ✅ 뒤로 가기
+        >
           <Text style={styles.buttonText}>이전</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.nextButton]}>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            styles.nextButton,
+            {width: scaleSize(140, width)},
+          ]}
+          onPress={() => navigation.navigate('MyPhotoPrompth')} // ✅ 다음 단계로 이동
+        >
           <Text style={styles.buttonText}>다음</Text>
         </TouchableOpacity>
       </View>
@@ -66,69 +106,72 @@ const VideoLengthScreen = () => {
   );
 };
 
+// 📌 **스타일 정의 (반응형 적용)**
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1F2C3D',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: '5%',
   },
-  progressBarContainer: {
+  progressContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 40,
+    alignItems: 'center',
+    position: 'absolute',
+    width: '100%', // ✅ 전체 너비 설정
+    paddingHorizontal: '10%', // ✅ 중앙 정렬을 위해 양옆 여백 추가
   },
-  stepCircle: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    marginHorizontal: 10,
-  },
-  activeStep: {
+  progressLine: {
+    height: 2,
     backgroundColor: '#51BCB4',
+    flex: 1, // ✅ 선의 길이를 자동으로 조정
+    marginHorizontal: '2%',
   },
-  inactiveStep: {
-    backgroundColor: '#5A6A7A',
+  progressDotActive: {
+    color: '#51BCB4',
+  },
+  progressDotInactive: {
+    color: '#888',
   },
   label: {
-    color: '#51BCB4',
     fontWeight: 'bold',
-    marginBottom: 10,
+    color: '#51BCB4',
+    marginBottom: '3%',
   },
-  sliderLabels: {
+  slider: {
+    height: scaleSize(40, 375),
+  },
+  timeLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '80%',
+    marginTop: scaleSize(5, 375),
   },
-  sliderText: {
+  timeText: {
     color: '#51BCB4',
-    fontWeight: 'bold',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '80%',
-    marginTop: 40,
+    marginTop: scaleSize(30, 375),
   },
   button: {
-    flex: 1,
-    paddingVertical: 12,
     alignItems: 'center',
-    borderRadius: 20,
+    paddingVertical: scaleSize(12, 375),
+    borderRadius: scaleSize(20, 375),
   },
   prevButton: {
-    backgroundColor: '#B0B0B0',
-    marginRight: 10,
+    backgroundColor: '#ccc',
+    marginRight: '2%',
   },
   nextButton: {
     backgroundColor: '#51BCB4',
-    marginLeft: 10,
   },
   buttonText: {
-    color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
+    color: '#1F2C3D',
   },
 });
 
-export default VideoLengthScreen;
+export default ShortsVideoScreen;
