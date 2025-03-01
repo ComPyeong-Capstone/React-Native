@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 // ✅ 홈 스크린 추가
-import HomeScreen from '../screens/HomeScreen';
+import HomeScreen from '../bottomtab/HomeScreen';
 
 // ✅ Shorts Screens 추가
 import ShortsVideoScreen from '../screens/shorts/ShortsVideoScreen';

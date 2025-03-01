@@ -3,11 +3,11 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // ✅ 스크린 가져오기 (ShortsVideoScreen 제거)
-import HomeScreen from '../screens/HomeScreen';
-import SearchScreen from '../screens/SearchScreen';
-import AddScreen from '../screens/AddScreen';
-import NotificationsScreen from '../screens/NotificationsScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import HomeScreen from '../bottomtab/HomeScreen';
+import SearchScreen from '../bottomtab/SearchScreen';
+import AddScreen from '../bottomtab/AddScreen';
+import NotificationsScreen from '../bottomtab/NotificationsScreen';
+import ProfileScreen from '../bottomtab/ProfileScreen';
 
 // ✅ Tab Navigator 생성
 const Tab = createBottomTabNavigator();
