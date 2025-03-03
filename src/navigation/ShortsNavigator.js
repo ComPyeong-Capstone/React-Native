@@ -1,8 +1,8 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 
 // ✅ 홈 스크린 추가
-import HomeScreen from '../bottomtab/HomeScreen';
+import HomeScreen from '../screens/bottomtab/HomeScreen';
 
 // ✅ Shorts Screens 추가
 import ShortsVideoScreen from '../screens/shorts/ShortsVideoScreen';
@@ -17,12 +17,18 @@ const Stack = createStackNavigator();
 
 const ShortsNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="ShortsVideoScreen" component={ShortsVideoScreen} />
       <Stack.Screen name="PromptInputScreen" component={PromptInputScreen} />
-      <Stack.Screen name="ImageSelectionScreen" component={ImageSelectionScreen} />
+      <Stack.Screen
+        name="ImageSelectionScreen"
+        component={ImageSelectionScreen}
+      />
       <Stack.Screen name="FinalVideoScreen" component={FinalVideoScreen} />
-      <Stack.Screen name="MusicSelectionScreen" component={MusicSelectionScreen} />
+      <Stack.Screen
+        name="MusicSelectionScreen"
+        component={MusicSelectionScreen}
+      />
       <Stack.Screen name="ResultScreen" component={ResultScreen} />
     </Stack.Navigator>
   );

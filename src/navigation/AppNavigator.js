@@ -1,6 +1,6 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 
 // ✅ 하단 탭 네비게이션 (메인 화면)
 import BottomTabNavigator from './BottomTabNavigator';
@@ -9,7 +9,7 @@ import BottomTabNavigator from './BottomTabNavigator';
 import ShortsNavigator from './ShortsNavigator';
 
 // ✅ Photo 관련 네비게이션
-import PhotoNavigator from './PhotoNavigator'; // ✅ 추가
+import PhotoNavigator from './PhotoNavigator';
 
 // ✅ Stack Navigator 생성
 const Stack = createStackNavigator();
@@ -19,7 +19,7 @@ const AppNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="Main" // ✅ 기본 화면을 'Main'으로 설정
-        screenOptions={{ headerShown: false }} // ✅ 모든 화면에서 헤더 숨김
+        screenOptions={{headerShown: false}} // ✅ 모든 화면에서 헤더 숨김
       >
         {/* ✅ 메인 하단 탭 네비게이션 */}
         <Stack.Screen name="Main" component={BottomTabNavigator} />

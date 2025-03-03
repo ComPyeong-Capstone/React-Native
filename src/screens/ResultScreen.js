@@ -1,8 +1,14 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons"; // Expo 아이콘 대신 변경
+import React from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-const { width } = Dimensions.get("window");
+const {width} = Dimensions.get('window');
 
 const KidsFriendlyUI = () => {
   return (
@@ -43,78 +49,78 @@ const KidsFriendlyUI = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    backgroundColor: "#1F2C3D",
+    alignItems: 'center',
+    backgroundColor: '#1F2C3D',
     paddingTop: 2,
   },
   progressBar: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginBottom: 0,
   },
   progressDot: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#CCC",
+    backgroundColor: '#CCC',
     marginHorizontal: 5,
   },
   resultBox: {
     width: width * 0.8,
     height: 550,
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: "#51BCB4",
+    borderColor: '#51BCB4',
     marginVertical: 20,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   resultText: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#1F2C3D",
+    fontWeight: 'bold',
+    color: '#1F2C3D',
   },
   buttonContainer: {
     marginTop: 10,
-    alignItems: "center",
+    alignItems: 'center',
   },
   postButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#51BCB4",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#51BCB4',
     paddingVertical: 15,
     paddingHorizontal: 130,
     borderRadius: 15,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 3,
   },
   buttonText: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
+    fontWeight: 'bold',
+    color: 'white',
     marginLeft: 10,
   },
   smallButtonContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 16,
   },
   saveButton: {
-    backgroundColor: "#356868",
+    backgroundColor: '#356868',
     paddingVertical: 15,
     paddingHorizontal: 65,
     borderRadius: 15,
     marginHorizontal: 8,
   },
   exitButton: {
-    backgroundColor: "#777",
+    backgroundColor: '#777',
     paddingVertical: 15,
     paddingHorizontal: 65,
     borderRadius: 15,
@@ -122,7 +128,7 @@ const styles = StyleSheet.create({
   },
   smallButtonText: {
     fontSize: 17,
-    color: "white",
+    color: 'white',
   },
 });
 
