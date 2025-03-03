@@ -1,45 +1,50 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons'; // ✅ 올바른 import 방식
 
 // ✅ 스크린 가져오기 (ShortsVideoScreen 제거)
-import HomeScreen from '../bottomtab/HomeScreen';
-import SearchScreen from '../bottomtab/SearchScreen';
-import AddScreen from '../bottomtab/AddScreen';
-import NotificationsScreen from '../bottomtab/NotificationsScreen';
-import ProfileScreen from '../bottomtab/ProfileScreen';
+import HomeScreen from '../screens/HomeScreen';
+import SearchScreen from '../screens/SearchScreen';
+import AddScreen from '../screens/AddScreen';
+import NotificationsScreen from '../screens/NotificationsScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 // ✅ Tab Navigator 생성
 const Tab = createBottomTabNavigator();
-
-// 📌 ✅ 아이콘 반환 함수 (렌더링 최적화)
-const getTabBarIcon = (routeName, color, size) => {
-  let iconName;
-
-  if (routeName === 'Home') {
-    iconName = 'home-outline';
-  } else if (routeName === 'Search') {
-    iconName = 'search-outline';
-  } else if (routeName === 'Add') {
-    iconName = 'add-circle-outline';
-  } else if (routeName === 'Notifications') {
-    iconName = 'notifications-outline';
-  } else if (routeName === 'Profile') {
-    iconName = 'person-outline';
-  }
-
-  return <Ionicons name={iconName} size={size} color={color} />;
-};
 
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
         headerShown: false,
-        tabBarIcon: ({color, size}) => getTabBarIcon(route.name, color, size), // ✅ 함수 호출
+        tabBarIcon: ({color, size}) => {
+          let iconName;
+
+          switch (route.name) {
+            case '':
+              iconName = 'home-outline';
+              break;
+            case 'Search':
+              iconName = 'search-outline';
+              break;
+            case 'Add':
+              iconName = 'add-circle-outline';
+              break;
+            case 'Notifications':
+              iconName = 'notifications-outline';
+              break;
+            case 'Profile':
+              iconName = 'person-outline';
+              break;
+            default:
+              iconName = 'ellipse-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
         tabBarActiveTintColor: '#51BCB4',
         tabBarInactiveTintColor: '#aaa',
-        tabBarStyle: {backgroundColor: '#1F2C3D'},
+        tabBarStyle: {backgroundColor: '#1F2C3D', height: 60},
       })}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
