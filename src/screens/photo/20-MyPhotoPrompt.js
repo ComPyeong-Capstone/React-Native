@@ -13,7 +13,7 @@ import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 const scaleSize = (size, width) => (size * width) / 375;
 const scaleFont = (size, width) => (size * width) / 375;
 
-const MyPhotoPrompth = ({navigation}) => {
+const MyPhotoPrompt = ({navigation}) => {
   const {width, height} = useWindowDimensions();
   const insets = useSafeAreaInsets(); // ✅ 노치 대응
 
@@ -202,4 +202,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MyPhotoPrompth;
+export default MyPhotoPrompt;

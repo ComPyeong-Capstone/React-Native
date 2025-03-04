@@ -1,55 +1,24 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Slider from '@react-native-community/slider';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useWindowDimensions} from 'react-native';
+import ProgressBar from '../../components/ProgressBar'; // ✅ 단계바 추가
 
 // 📌 반응형 크기 조정 함수
 const scaleSize = (size, width) => (size * width) / 375;
 const scaleFont = (size, width) => (size * width) / 375;
 
-const ShortsVideoScreen = ({navigation}) => {
-  const {width, height} = useWindowDimensions(); // ✅ 반응형 적용
-  const insets = useSafeAreaInsets(); // ✅ 노치 영역 고려
+const VideoLengthScreen = ({navigation, route}) => {
+  const {width, height} = useWindowDimensions();
   const [videoLength, setVideoLength] = useState(30);
+  const currentStep = route.params?.step || 1; // ✅ 현재 단계 설정 (1단계)
+  const from = route.params?.from || 'shorts'; // ✅ 'shorts' 또는 'photo' 구분
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* ✅ 최상단 4단계 진행바 (노치 대응) */}
-      <View
-        style={[
-          styles.progressContainer,
-          {top: insets.top + scaleSize(10, height)},
-        ]}>
-        <Text
-          style={[styles.progressDotActive, {fontSize: scaleFont(18, width)}]}>
-          ●
-        </Text>
-        <View style={styles.progressLine} />
-        <Text
-          style={[
-            styles.progressDotInactive,
-            {fontSize: scaleFont(18, width)},
-          ]}>
-          ○
-        </Text>
-        <View style={styles.progressLine} />
-        <Text
-          style={[
-            styles.progressDotInactive,
-            {fontSize: scaleFont(18, width)},
-          ]}>
-          ○
-        </Text>
-        <View style={styles.progressLine} />
-        <Text
-          style={[
-            styles.progressDotInactive,
-            {fontSize: scaleFont(18, width)},
-          ]}>
-          ○
-        </Text>
-      </View>
+      {/* ✅ 단계바 추가 (5단계) */}
+      <ProgressBar currentStep={currentStep} totalSteps={5} />
 
       {/* 📌 영상 길이 선택 */}
       <Text
@@ -81,24 +50,30 @@ const ShortsVideoScreen = ({navigation}) => {
 
       {/* 📌 버튼 추가 */}
       <View style={styles.buttonContainer}>
+        {/* ✅ 이전 버튼: AddScreen으로 이동 (goBack 사용) */}
         <TouchableOpacity
           style={[
             styles.button,
             styles.prevButton,
             {width: scaleSize(140, width)},
           ]}
-          onPress={() => navigation.goBack()} // ✅ 뒤로 가기
-        >
+          onPress={() => navigation.goBack()}>
           <Text style={styles.buttonText}>이전</Text>
         </TouchableOpacity>
+
+        {/* ✅ 다음 버튼: PromptInputScreen으로 이동 */}
         <TouchableOpacity
           style={[
             styles.button,
             styles.nextButton,
             {width: scaleSize(140, width)},
           ]}
-          onPress={() => navigation.navigate('PromptInputScreen')} // ✅ 다음 단계로 이동
-        >
+          onPress={() =>
+            navigation.navigate('PromptInputScreen', {
+              from,
+              step: currentStep + 1,
+            })
+          }>
           <Text style={styles.buttonText}>다음</Text>
         </TouchableOpacity>
       </View>
@@ -114,25 +89,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: '5%',
-  },
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'absolute',
-    width: '100%', // ✅ 전체 너비 설정
-    paddingHorizontal: '10%', // ✅ 중앙 정렬을 위해 양옆 여백 추가
-  },
-  progressLine: {
-    height: 2,
-    backgroundColor: '#51BCB4',
-    flex: 1, // ✅ 선의 길이를 자동으로 조정
-    marginHorizontal: '2%',
-  },
-  progressDotActive: {
-    color: '#51BCB4',
-  },
-  progressDotInactive: {
-    color: '#888',
   },
   label: {
     fontWeight: 'bold',
@@ -174,4 +130,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ShortsVideoScreen;
+export default VideoLengthScreen;

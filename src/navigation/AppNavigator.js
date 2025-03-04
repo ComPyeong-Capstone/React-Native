@@ -11,6 +11,9 @@ import ShortsNavigator from './ShortsNavigator';
 // ✅ Photo 관련 네비게이션
 import PhotoNavigator from './PhotoNavigator';
 
+// ✅ ResultScreen 추가
+import ResultScreen from '../screens/ResultScreen'; // ✅ 상위 screens 폴더에서 불러오기
+
 // ✅ Stack Navigator 생성
 const Stack = createStackNavigator();
 
@@ -29,6 +32,9 @@ const AppNavigator = () => {
 
         {/* ✅ Photo 관련 네비게이션 */}
         <Stack.Screen name="PhotoStack" component={PhotoNavigator} />
+
+        {/* ✅ ResultScreen 추가 */}
+        <Stack.Screen name="ResultScreen" component={ResultScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

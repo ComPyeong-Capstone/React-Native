@@ -146,7 +146,8 @@ const FinalVideoScreen = ({navigation}) => {
             styles.nextButton,
             {width: width * 0.35, height: scaleSize(40, height)},
           ]}
-          onPress={() => navigation.navigate('ResultScreen')}>
+          onPress={() => navigation.navigate('ResultScreen')} // ✅ 올바른 네비게이션 경로 확인
+        >
           <Text style={[styles.buttonText, {fontSize: scaleFont(16, width)}]}>
             영상 병합
           </Text>

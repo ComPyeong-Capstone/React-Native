@@ -2,134 +2,182 @@ import React from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
-  Dimensions,
+  TouchableOpacity,
+  ScrollView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useWindowDimensions} from 'react-native';
+import ProgressBar from '../components/ProgressBar'; // ✅ 단계바 추가
 
-const {width} = Dimensions.get('window');
+// 📌 반응형 크기 조정 함수
+const scaleSize = (size, refSize) => (size * refSize) / 375;
+const scaleFont = (size, refSize) => (size * refSize) / 375;
 
-const KidsFriendlyUI = () => {
+const ResultScreen = ({navigation, route}) => {
+  const {width, height} = useWindowDimensions();
+
+  // ✅ Shorts는 5단계, Photo는 4단계 구분
+  const from = route.params?.from || 'shorts'; // 기본값은 'shorts'
+  const totalSteps = from === 'shorts' ? 5 : 4;
+  const currentStep = totalSteps; // ✅ 최종 단계
+
   return (
-    <View style={styles.container}>
-      {/* 진행 바 */}
-      <View style={styles.progressBar}>
-        <View style={styles.progressDot} />
-        <View style={[styles.progressDot, styles.activeDot]} />
-        <View style={styles.progressDot} />
-        <View style={styles.progressDot} />
+    <SafeAreaView style={styles.container}>
+      {/* ✅ 단계바 추가 (높이 통일) */}
+      <View style={styles.progressBarWrapper}>
+        <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
       </View>
 
-      {/* 중앙 네모 박스 (결과물) */}
-      <View style={styles.resultBox}>
-        <Text style={styles.resultText}>최종결과물</Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {/* ✅ 최종 결과물 박스 */}
+        <View
+          style={[
+            styles.resultBox,
+            {
+              width: scaleSize(180, width),
+              height: scaleSize(180, height),
+              marginTop: scaleSize(30, height),
+            },
+          ]}>
+          <Text style={[styles.resultText, {fontSize: scaleFont(16, width)}]}>
+            최종결과물
+          </Text>
+        </View>
 
-      {/* 버튼 */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.postButton}>
-          <Icon name="cloud-upload-outline" size={24} color="white" />
-          <Text style={styles.buttonText}>포스팅</Text>
-        </TouchableOpacity>
-
-        <View style={styles.smallButtonContainer}>
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.smallButtonText}>저장</Text>
+        {/* ✅ 버튼 컨테이너 */}
+        <View
+          style={[styles.buttonContainer, {marginTop: scaleSize(30, height)}]}>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              styles.postButton,
+              {
+                width: scaleSize(220, width),
+                paddingVertical: scaleSize(12, height),
+              },
+            ]}
+            onPress={() => console.log('포스팅')}>
+            <Text style={[styles.buttonText, {fontSize: scaleFont(14, width)}]}>
+              포스팅
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.exitButton}>
-            <Text style={styles.smallButtonText}>나가기</Text>
+
+          <View style={styles.bottomButtons}>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.exitButton,
+                {
+                  width: scaleSize(100, width),
+                  paddingVertical: scaleSize(10, height),
+                },
+              ]}
+              onPress={() => navigation.navigate('Main')}>
+              <Text
+                style={[styles.buttonText, {fontSize: scaleFont(14, width)}]}>
+                나가기
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.saveButton,
+                {
+                  width: scaleSize(100, width),
+                  paddingVertical: scaleSize(10, height),
+                },
+              ]}
+              onPress={() => console.log('저장')}>
+              <Text
+                style={[styles.buttonText, {fontSize: scaleFont(14, width)}]}>
+                저장
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* ✅ 🔥 이전 버튼 추가 (Shorts/Photo에 따라 이동 다르게 설정) */}
+          <TouchableOpacity
+            style={[
+              styles.button,
+              styles.prevButton,
+              {
+                width: scaleSize(140, width),
+                paddingVertical: scaleSize(12, height),
+              },
+            ]}
+            onPress={
+              () => navigation.navigate('FinalVideoScreen', {from}) // ✅ 어디서 왔는지 유지
+            }>
+            <Text style={[styles.buttonText, {fontSize: scaleFont(14, width)}]}>
+              이전
+            </Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
+// 📌 **스타일 정의 (반응형 적용)**
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     backgroundColor: '#1F2C3D',
-    paddingTop: 2,
   },
-  progressBar: {
-    flexDirection: 'row',
+  progressBarWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: scaleSize(15, 375), // ✅ 다른 화면과 정렬 유지
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 0,
-  },
-  progressDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#CCC',
-    marginHorizontal: 5,
+    paddingVertical: scaleSize(20, 375),
   },
   resultBox: {
-    width: width * 0.8,
-    height: 550,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
     borderWidth: 2,
     borderColor: '#51BCB4',
-    marginVertical: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   resultText: {
-    fontSize: 20,
+    color: '#51BCB4',
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: '5%',
+  },
+  bottomButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: scaleSize(10, 375),
+  },
+  button: {
+    alignItems: 'center',
+    borderRadius: 18,
+  },
+  postButton: {
+    backgroundColor: '#51BCB4',
+  },
+  exitButton: {
+    backgroundColor: '#ccc',
+  },
+  saveButton: {
+    backgroundColor: '#51BCB4',
+  },
+  prevButton: {
+    backgroundColor: '#888',
+  },
+  buttonText: {
     fontWeight: 'bold',
     color: '#1F2C3D',
   },
-  buttonContainer: {
-    marginTop: 10,
-    alignItems: 'center',
-  },
-  postButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#51BCB4',
-    paddingVertical: 15,
-    paddingHorizontal: 130,
-    borderRadius: 15,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  buttonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
-    marginLeft: 10,
-  },
-  smallButtonContainer: {
-    flexDirection: 'row',
-    marginTop: 16,
-  },
-  saveButton: {
-    backgroundColor: '#356868',
-    paddingVertical: 15,
-    paddingHorizontal: 65,
-    borderRadius: 15,
-    marginHorizontal: 8,
-  },
-  exitButton: {
-    backgroundColor: '#777',
-    paddingVertical: 15,
-    paddingHorizontal: 65,
-    borderRadius: 15,
-    marginHorizontal: 8,
-  },
-  smallButtonText: {
-    fontSize: 17,
-    color: 'white',
-  },
 });
 
-export default KidsFriendlyUI;
+export default ResultScreen;

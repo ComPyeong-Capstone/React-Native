@@ -6,55 +6,24 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useWindowDimensions} from 'react-native';
+import ProgressBar from '../../components/ProgressBar'; // ✅ 단계바 추가
 
 // 📌 반응형 크기 조정 함수
 const scaleSize = (size, width) => (size * width) / 375;
 const scaleFont = (size, width) => (size * width) / 375;
 
-const PromptInputScreen = ({navigation}) => {
-  const {width, height} = useWindowDimensions(); // ✅ 반응형 적용
-  const insets = useSafeAreaInsets(); // ✅ 노치 대응
+const PromptInputScreen = ({navigation, route}) => {
+  const {width, height} = useWindowDimensions();
   const [prompt, setPrompt] = useState('');
+  const currentStep = route.params?.step || 2; // ✅ 현재 단계 설정 (2단계)
+  const from = route.params?.from || 'shorts'; // ✅ 'shorts' 또는 'photo' 구분
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* ✅ 최상단 4단계 진행바 (노치 대응) */}
-      <View
-        style={[
-          styles.progressContainer,
-          {top: insets.top + scaleSize(10, height)},
-        ]}>
-        <Text
-          style={[
-            styles.progressDotInactive,
-            {fontSize: scaleFont(18, width)},
-          ]}>
-          ○
-        </Text>
-        <View style={styles.progressLine} />
-        <Text
-          style={[styles.progressDotActive, {fontSize: scaleFont(18, width)}]}>
-          ●
-        </Text>
-        <View style={styles.progressLine} />
-        <Text
-          style={[
-            styles.progressDotInactive,
-            {fontSize: scaleFont(18, width)},
-          ]}>
-          ○
-        </Text>
-        <View style={styles.progressLine} />
-        <Text
-          style={[
-            styles.progressDotInactive,
-            {fontSize: scaleFont(18, width)},
-          ]}>
-          ○
-        </Text>
-      </View>
+      {/* ✅ 단계바 추가 (2단계 / 총 5단계) */}
+      <ProgressBar currentStep={currentStep} totalSteps={5} />
 
       {/* 📌 프롬프트 입력 */}
       <View
@@ -74,24 +43,35 @@ const PromptInputScreen = ({navigation}) => {
 
       {/* 📌 버튼 추가 */}
       <View style={styles.buttonContainer}>
+        {/* ✅ 이전 버튼: VideoLengthScreen으로 이동 */}
         <TouchableOpacity
           style={[
             styles.button,
             styles.prevButton,
             {width: scaleSize(140, width)},
           ]}
-          onPress={() => navigation.goBack()} // ✅ 이전 단계로 이동
-        >
+          onPress={() =>
+            navigation.navigate('VideoLengthScreen', {
+              from,
+              step: currentStep - 1,
+            })
+          }>
           <Text style={styles.buttonText}>이전</Text>
         </TouchableOpacity>
+
+        {/* ✅ 다음 버튼: ImageSelectionScreen으로 이동 */}
         <TouchableOpacity
           style={[
             styles.button,
             styles.nextButton,
             {width: scaleSize(140, width)},
           ]}
-          onPress={() => navigation.navigate('ImageSelectionScreen')} // ✅ ImageSelectionScreen으로 이동
-        >
+          onPress={() =>
+            navigation.navigate('ImageSelectionScreen', {
+              from,
+              step: currentStep + 1,
+            })
+          }>
           <Text style={styles.buttonText}>이미지 생성</Text>
         </TouchableOpacity>
       </View>
@@ -107,25 +87,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: '5%',
-  },
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'absolute',
-    width: '100%', // ✅ 전체 너비 설정
-    paddingHorizontal: '10%', // ✅ 중앙 정렬을 위해 양옆 여백 추가
-  },
-  progressLine: {
-    height: 2,
-    backgroundColor: '#51BCB4',
-    flex: 1, // ✅ 선의 길이를 자동으로 조정
-    marginHorizontal: '2%',
-  },
-  progressDotActive: {
-    color: '#51BCB4',
-  },
-  progressDotInactive: {
-    color: '#888',
   },
   inputContainer: {
     borderWidth: 2,

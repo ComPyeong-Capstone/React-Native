@@ -7,20 +7,26 @@ import {
   Animated,
   useWindowDimensions,
 } from 'react-native';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import ProgressBar from '../../components/ProgressBar'; // ✅ 단계바 추가
 
 // 📌 반응형 크기 조정 함수
 const scaleSize = (size, width) => (size * width) / 375;
 const scaleFont = (size, width) => (size * width) / 375;
 
-const FinalVideoScreen = ({navigation}) => {
+const FinalVideoScreen = ({navigation, route}) => {
   const {width, height} = useWindowDimensions();
-  const insets = useSafeAreaInsets();
+  const [selectedVideo, setSelectedVideo] = useState(0);
+  const translateX = new Animated.Value(0);
+  const currentStep = route.params?.step || 4; // ✅ 현재 단계 설정 (4단계)
+  const from = route.params?.from || 'shorts'; // ✅ 'shorts' 또는 'photo' 구분
+
+  // 📌 이전 화면 설정
+  const previousScreen =
+    from === 'shorts' ? 'ImageSelectionScreen' : 'MyPhotoPrompt';
 
   // 📌 더미 데이터 (생성된 동영상 목록)
   const videos = ['생성된 동영상 1', '생성된 동영상 2', '생성된 동영상 3'];
-  const [selectedVideo, setSelectedVideo] = useState(0);
-  const translateX = new Animated.Value(0);
 
   const handleNext = () => {
     if (selectedVideo < videos.length - 1) {
@@ -43,53 +49,15 @@ const FinalVideoScreen = ({navigation}) => {
   };
 
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        {paddingTop: insets.top + scaleSize(20, width)},
-      ]}>
-      {/* ✅ 최상단 4단계 진행바 - HomeScreen과 동일한 위치 */}
-      <View
-        style={[
-          styles.progressContainer,
-          {marginTop: scaleSize(10, width), width: width * 0.9},
-        ]}>
-        <Text
-          style={[
-            styles.progressDotInactive,
-            {fontSize: scaleFont(18, width)},
-          ]}>
-          ○
-        </Text>
-        <View style={[styles.progressLine, {width: width * 0.2}]} />
-        <Text
-          style={[
-            styles.progressDotInactive,
-            {fontSize: scaleFont(18, width)},
-          ]}>
-          ○
-        </Text>
-        <View style={[styles.progressLine, {width: width * 0.2}]} />
-        <Text
-          style={[
-            styles.progressDotInactive,
-            {fontSize: scaleFont(18, width)},
-          ]}>
-          ○
-        </Text>
-        <View style={[styles.progressLine, {width: width * 0.2}]} />
-        <Text
-          style={[styles.progressDotActive, {fontSize: scaleFont(18, width)}]}>
-          ●
-        </Text>
+    <SafeAreaView style={styles.container}>
+      {/* ✅ 단계바 추가 (4단계 / 총 5단계) */}
+      <View style={styles.progressBarWrapper}>
+        <ProgressBar currentStep={currentStep} totalSteps={5} />
       </View>
 
       {/* 📌 동영상 슬라이드 */}
       <View
-        style={[
-          styles.sliderContainer,
-          {width: width * 0.9, height: height * 0.4},
-        ]}>
+        style={[styles.sliderContainer, {marginTop: scaleSize(50, height)}]}>
         <TouchableOpacity onPress={handlePrev} style={styles.arrowButton}>
           <Text style={[styles.arrowText, {fontSize: scaleFont(24, width)}]}>
             {'<'}
@@ -119,34 +87,43 @@ const FinalVideoScreen = ({navigation}) => {
       <TouchableOpacity
         style={[
           styles.musicButton,
-          {width: width * 0.7, height: scaleSize(40, height)},
+          {
+            width: width * 0.7,
+            height: scaleSize(40, height),
+            marginTop: scaleSize(20, height),
+          },
         ]}
-        onPress={() => navigation.navigate('MusicSelectionScreen')}>
+        onPress={() => navigation.navigate('MusicSelectionScreen')} // ✅ step 증가 제거
+      >
         <Text style={[styles.buttonText, {fontSize: scaleFont(16, width)}]}>
           배경 음악
         </Text>
       </TouchableOpacity>
 
       {/* 📌 하단 버튼 */}
-      <View style={[styles.buttonContainer, {width: width * 0.9}]}>
+      <View
+        style={[styles.buttonContainer, {marginTop: scaleSize(20, height)}]}>
+        {/* ✅ 이전 버튼: 'shorts'는 ImageSelectionScreen, 'photo'는 MyPhotoPrompt */}
         <TouchableOpacity
           style={[
             styles.button,
             styles.prevButton,
             {width: width * 0.35, height: scaleSize(40, height)},
           ]}
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.navigate(previousScreen, {from})}>
           <Text style={[styles.buttonText, {fontSize: scaleFont(16, width)}]}>
             이전
           </Text>
         </TouchableOpacity>
+
+        {/* ✅ 다음 버튼: ResultScreen으로 이동 */}
         <TouchableOpacity
           style={[
             styles.button,
             styles.nextButton,
             {width: width * 0.35, height: scaleSize(40, height)},
           ]}
-          onPress={() => navigation.navigate('ResultScreen')}>
+          onPress={() => navigation.navigate('ResultScreen', {step: 5, from})}>
           <Text style={[styles.buttonText, {fontSize: scaleFont(16, width)}]}>
             영상 병합
           </Text>
@@ -156,25 +133,17 @@ const FinalVideoScreen = ({navigation}) => {
   );
 };
 
+// 📌 **스타일 정의 (반응형 적용)**
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1F2C3D',
     alignItems: 'center',
   },
-  progressContainer: {
-    flexDirection: 'row',
+  progressBarWrapper: {
+    width: '100%',
     alignItems: 'center',
-  },
-  progressLine: {
-    height: 2,
-    backgroundColor: '#51BCB4',
-  },
-  progressDotActive: {
-    color: '#51BCB4',
-  },
-  progressDotInactive: {
-    color: '#888',
+    marginBottom: scaleSize(15, 375), // ✅ 다른 화면과 정렬 유지
   },
   sliderContainer: {
     flexDirection: 'row',
@@ -200,12 +169,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: scaleSize(15, 375),
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: scaleSize(25, 375),
+    width: '90%',
   },
   button: {
     alignItems: 'center',

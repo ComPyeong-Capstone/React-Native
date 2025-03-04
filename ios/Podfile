@@ -1,35 +1,50 @@
-# Resolve react_native_pods.rb with node to allow for hoisting
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+platform :ios, '16.0'  # ✅ iOS 최소 지원 버전 유지
 
-platform :ios, min_ios_version_supported
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+
+# ✅ New Architecture 활성화 가능 (필요한 경우에만 설정)
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'  # 🔄 '1' ➝ '0'으로 변경 (일단 비활성화 후 테스트)
+
 prepare_react_native_project!
-
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
 
 target 'front4' do
   config = use_native_modules!
 
   use_react_native!(
     :path => config[:reactNativePath],
-    # An absolute path to your application root.
+    :hermes_enabled => false,  # ❌ Hermes 비활성화 (JSC 사용)
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  # ✅ `use_frameworks!` 설정 삭제 (RN은 기본적으로 static library 사용)
+  # ✅ `use_modular_headers!` 설정도 삭제
+  # use_frameworks! :linkage => :static
+  # use_modular_headers!
+
+  # ✅ 특정 Pod만 `static_library` 설정 (New Architecture 관련 문제 해결)
+  pre_install do |installer|
+    installer.pod_targets.each do |pod|
+      if pod.name.start_with?('React', 'RCT', 'Yoga', 'FBLazyVector', 'FBReactNativeSpec', 'RCTTypeSafety', 'React-Core', 'ReactCommon', 'React-jsinspector', 'glog', 'boost', 'folly')
+        def pod.build_type
+          Pod::BuildType.static_library
+        end
+      end
+    end
+  end
+
   post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
+      :mac_catalyst_enabled => false
     )
+
+    # ✅ Xcode 15+ 환경에서 'Multiple commands produce' 문제 해결
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'NO'  # 🔄 'YES' ➝ 'NO'로 변경
+        config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'  # ❌ iOS Simulator에서 arm64 빌드 방지
+      end
+    end
   end
 end
